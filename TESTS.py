@@ -20,6 +20,8 @@ G_main = G.subgraph(largest_cc)
 diameter = nx.diameter(G_main)
 avg_shortest_path_length = nx.average_shortest_path_length(G_main)
 
+#APPROACH 2
+
 # Custom function to compute clustering of a node
 def clustering(G, node):
     k = G.degree[node]
