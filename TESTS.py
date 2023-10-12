@@ -1,58 +1,66 @@
+import random
 import networkx as nx
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+
+#-----------------------------------------------------------WEEK 1
+#QUERY 1:
+#a) Pick a social network among the one proposed on luiss.learn
+#b) Implement it in Python.
+#c) Draw the graph 
+#d) Compute the number of nodes,edges, average degree and the density. Comment.
+
+#START CODE HERE:
+
+#Be careful if the network that you have picked is directed or not.
+#IMPORTING DATABASE
+edges_filename = "edges.csv"
+nodes_filename = "nodes.csv"
+
+df_edges = pd.read_csv(edges_filename)
+df_nodes = pd.read_csv(nodes_filename)
+
+
+# Create the graph using the edges CSV
+G = nx.from_pandas_edgelist(df_edges, '# source', ' target')  # Adjusted column name
+# Closeness Centrality
+def compute_closeness_centrality(graph):
+    closeness_centrality = {}
+    for node in graph.nodes():
+        total_distance = sum(nx.shortest_path_length(graph, node, target) for target in graph.nodes() if target != node)
+        num_nodes = len(graph.nodes()) - 1  # Excluding the node itself
+        closeness_centrality[node] = num_nodes / total_distance if total_distance != 0 else 0
+    return closeness_centrality
+
+closeness_centrality_values = compute_closeness_centrality(G)
+most_central_node_closeness = max(closeness_centrality_values, key=closeness_centrality_values.get)
+
+# Betweenness Centrality
+def compute_betweenness_centrality(graph):
+    return nx.betweenness_centrality(graph)
+
+betweenness_centrality_values = compute_betweenness_centrality(G)
+most_central_node_betweenness = max(betweenness_centrality_values, key=betweenness_centrality_values.get)
+
+# Cumulative Distribution Visualization
+import numpy as np
 import matplotlib.pyplot as plt
 
-# Load nodes and edges from CSV files
-nodes_df = pd.read_csv('nodes.csv')
-edges_df = pd.read_csv('edges.csv')
-edges_df.columns = edges_df.columns.str.strip()  # Trim column names
+def plot_cumulative_distribution(values, title):
+    sorted_values = np.sort(list(values))
+    yvals = np.arange(1, len(sorted_values) + 1) / float(len(sorted_values))
+    
+    plt.figure(figsize=(10, 7))
+    plt.plot(sorted_values, 1 - yvals, marker='o', linestyle='-', markersize=4)
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.title(title)
+    plt.xlabel('Centrality Value')
+    plt.ylabel('Fraction of Nodes with Higher Centrality')
+    plt.grid(True, which="both", ls="--", linewidth=0.5)
+    plt.show()
 
-# Create the graph
-G = nx.from_pandas_edgelist(edges_df, source='# source', target='target')
+plot_cumulative_distribution(closeness_centrality_values.values(), 'Cumulative Distribution of Closeness Centrality')
+plot_cumulative_distribution(betweenness_centrality_values.values(), 'Cumulative Distribution of Betweenness Centrality')
 
-# Extract the largest connected component
-largest_cc = max(nx.connected_components(G), key=len)
-G_main = G.subgraph(largest_cc)
-
-# Compute metrics for the largest connected component
-
-# Diameter and Average Shortest Path Length
-diameter = nx.diameter(G_main)
-avg_shortest_path_length = nx.average_shortest_path_length(G_main)
-
-#APPROACH 2
-
-# Custom function to compute clustering of a node
-def clustering(G, node):
-    k = G.degree[node]
-    if k == 0 or k == 1:
-        return 0
-    else:
-        List_nodes = [s for s in G.nodes()]
-        i = List_nodes.index(node)
-        A = nx.adjacency_matrix(G)
-        A3 = A**3
-        triangle = A3[i, i] / 2
-        den = k * (k - 1) / 2
-        return triangle / den
-
-# Custom function to compute average clustering of the graph
-def average_clustering(G):
-    N = G.number_of_nodes()
-    Temp_sum = sum(clustering(G, i) for i in G.nodes())
-    return Temp_sum / N
-
-# Compute average clustering using NetworkX's built-in function
-avg_clustering_nx = nx.average_clustering(G_main)
-
-# Compute average clustering using custom function
-avg_clustering_custom = average_clustering(G_main)
-
-print(f"Diameter: {diameter}")
-print(f"Average Shortest Path Length: {avg_shortest_path_length}")
-print(f"Average Clustering (NetworkX): {avg_clustering_nx}")
-print(f"Average Clustering (Custom): {avg_clustering_custom}")
-
-# Visualization (Optional)
-nx.draw(G_main, with_labels=True)
-plt.show()
