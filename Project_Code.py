@@ -63,7 +63,7 @@ plt.show()
 #b') Implement a function computing the transitivity using basic function of networkx
 
 #START CODE HERE:
-"""""
+
 # Extract the largest component of the graph 'G'
 largest_component = max(nx.connected_components(G), key=len)
 G_largest = G.subgraph(largest_component)
@@ -109,63 +109,10 @@ def compute_transitivity(graph):
 # Compute transitivity using the implemented function
 computed_transitivity = compute_transitivity(G)
 
-
-import networkx as nx
-import matplotlib.pyplot as plt
-"""
-#-----------------------------------------------------------WEEK 2 USING G_I AND G_S
-
-# Definition of the graphs G_I and G_S using the provided edge lists
-imp_advice = [...]
-sna_advice = [...]
-
-G_I = nx.from_edgelist(imp_advice)
-G_S = nx.from_edgelist(sna_advice)
-
-# Extract the largest component of the graph 'G_I'
-largest_component_I = max(nx.connected_components(G_I), key=len)
-G_I_largest = G_I.subgraph(largest_component_I)
-
-# Extract the largest component of the graph 'G_S'
-largest_component_S = max(nx.connected_components(G_S), key=len)
-G_S_largest = G_S.subgraph(largest_component_S)
-
-# OPTION 1: Average distance and Diameter calculations for G_I and G_S
-
-avg_distance_I = nx.average_shortest_path_length(G_I_largest)
-diameter_I = nx.diameter(G_I_largest)
-avg_distance_S = nx.average_shortest_path_length(G_S_largest)
-diameter_S = nx.diameter(G_S_largest)
-
-print(f"For G_I (largest component):\n- Average distance: {avg_distance_I}\n- Diameter: {diameter_I}")
-print(f"\nFor G_S (largest component):\n- Average distance: {avg_distance_S}\n- Diameter: {diameter_S}")
-
-# Plotting the graphs G_I and G_S
-plt.figure(figsize=(12, 6))
-
-plt.subplot(1, 2, 1)
-nx.draw(G_I, with_labels=True, node_size=500, node_color="skyblue", font_size=10)
-plt.title("Graph G_I")
-
-plt.subplot(1, 2, 2)
-nx.draw(G_S, with_labels=True, node_size=500, node_color="lightgreen", font_size=10)
-plt.title("Graph G_S")
-
-plt.tight_layout()
-plt.show()
-
-# OPTION 2: Average clustering coefficient and Transitivity calculations for G_I and G_S
-
-avg_clustering_I = nx.average_clustering(G_I)
-avg_clustering_S = nx.average_clustering(G_S)
-transitivity_I = nx.transitivity(G_I)
-transitivity_S = nx.transitivity(G_S)
-
-print(f"\nFor G_I:\n- Average clustering coefficient: {avg_clustering_I}\n- Transitivity: {transitivity_I}")
-print(f"\nFor G_S:\n- Average clustering coefficient: {avg_clustering_S}\n- Transitivity: {transitivity_S}")
-
-# Function to compute the transitivity of a graph using basic functions of NetworkX
-def compute_transitivity(graph):
-    triangles = sum(nx.triangles(graph).values()) / 3
-    triples = sum(len(list(nx.all_neighbors(graph, node))) * (len(list(nx.all_neighbors(graph, node))) - 1) for node in graph) / 2
-    return 3 * triangles / triples if triples != 0 else 0
+print("OPTION A:")
+print("   Diameter: ", diameter)
+print("   Average Distance: ",avg_distance)
+print("OPTION B:")
+print("   Average Clustering: ",avg_clustering)
+print("   Transitivity: ",transitivity)
+print("   Computed ransativity: ",computed_transitivity)
